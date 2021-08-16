@@ -1,0 +1,73 @@
+rm(list = ls())
+graphics.off()
+
+# 1) Los parámetros x e y son los datos tabulados iniciales. ----
+x = c(0.5, 0.6, 0.7)
+y = c(0.4794, 0.5646, 0.6442)
+
+
+# 2) Corremos el Algoritmo ----
+derivada2ptos<-function(x, y, xindice, H = T){ #será progresivo por H = True
+  n = length(y)
+  yprima = c(rep(NA,n))
+  
+  if(H == T){#Progresivo
+    h = diff(x)[1]
+    
+    if(missing(xindice)){
+      for (i in 1:(n - 1)) {
+        yprima[i] = (y[i+1] - y[i])/h
+      }
+      tabla = cbind.data.frame(x, y, yprima)
+      return(tabla)
+    }
+    else{
+      if(xindice == n){
+        return("Este valor no se puede calcular")
+      }
+      else{
+        yprima[xindice] = (y[xindice+1] - y[xindice])/h
+        return(yprima[xindice])
+      }
+    }
+  }
+  else{#Regresivo
+    h = -diff(x)[1]
+    if(missing(xindice)){
+      for (i in 2:n) {
+        yprima[i] = (y[i-1] - y[i])/h
+      }
+      tabla = cbind.data.frame(x, y, yprima)
+      return(tabla)
+    }
+    else{
+      if(xindice == 1){
+        return("Este valor no se puede calcular")
+      }
+      else{
+        yprima[xindice] = (y[xindice-1] - y[xindice])/h
+        return(yprima[xindice])
+      }
+    }
+  }
+}
+
+# 3) Calculo el punto ---
+# El parámetro, por defecto como TRUE, H indica que las formulas serán progresivas,
+#con H = F las formulas serán regresivas.
+
+########PUNTO A##############
+derivada2ptos(x, y, 1, H = T)
+#Primera aproximacion = 0.852
+
+derivada2ptos(x, y, 2, H = T)
+#Segunda aproximacion = 0.796
+
+derivada2ptos(x, y, 3, H = T)
+#"Este valor no se puede calcular"  PARA REGRESIVA NO SE PUEDE CALC. VALOR DE EXTREMO
+
+derivada2ptos(x, y, 2, H = F)
+#Segunda aproximacion = 0.852
+
+derivada2ptos(x, y, 3, H = F)
+#con REGRESIVA: 0.796
