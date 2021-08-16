@@ -1,0 +1,111 @@
+rm(list = ls())
+graphics.off()
+
+# 1) Los parámetros x e y son los datos tabulados iniciales. ----
+x = c (8.1,8.3,8.5,8.7)
+y = c(16.94410,17.56492,18.19056,18.82091)
+
+
+# 2) Corremos el Algoritmo ----
+derivada3ptos<-function(x, y, xindice, H = T, endpoint = F){
+  
+  n = length(y)
+  yprima = c(rep(NA,n))
+  
+  if(H == T){ #If para fórmulas progresivas
+    h = diff(x)[1]
+    if(endpoint == F){
+      if(missing(xindice)){
+        for (i in 2:(n - 1)) {
+          yprima[i] = (-y[i-1] + y[i+1])/(2*h)
+        }
+        tabla = cbind.data.frame(x, y, yprima)
+        return(tabla)
+      }
+      else{
+        if(xindice == 1 || xindice == n){
+          return("Este valor no se puede calcular")
+        }
+        else{
+          yprima[xindice] = (-y[xindice-1] + y[xindice+1])/(2*h)
+          return(yprima[xindice])
+        }
+      }
+    }else{
+      if(missing(xindice)){
+        for (i in 1:(n - 2)) {
+          yprima[i] = (-3*y[i] + 4*y[i+1] - y[i+2])/(2*h)
+        }
+        tabla = cbind.data.frame(x, y, yprima)
+        return(tabla)
+      }
+      else{
+        if(xindice == n || xindice == n-1){
+          return("Este valor no se puede calcular")
+        }
+        else{
+          yprima[xindice] = (-3*y[xindice] + 4*y[xindice+1] - y[xindice+2])/(2*h)
+          return(yprima[xindice])
+        }
+      }
+    }
+  }else{#Formulas regresivas ----
+    h = -diff(x)[1] 
+    if(endpoint == F){
+      if(missing(xindice)){
+        for (i in 2:(n - 1)) {
+          yprima[i] = (-y[i+1] + y[i-1])/(2*h)
+        }
+        tabla = cbind.data.frame(x, y, yprima)
+        return(tabla)
+      }
+      else{
+        if(xindice == 1 || xindice == n){
+          return("Este valor no se puede calcular")
+        }
+        else{
+          yprima[xindice] = (-y[xindice+1] + y[xindice-1])/(2*h)
+          return(yprima[xindice])
+        }
+      }
+    }else{
+      if(missing(xindice)){
+        for (i in 3:n) {
+          yprima[i] = (-3*y[i] + 4*y[i-1] - y[i-2])/(2*h)
+        }
+        tabla = cbind.data.frame(x, y, yprima)
+        return(tabla)
+      }
+      else{
+        if(xindice == 1 || xindice == 2){
+          return("Este valor no se puede calcular")
+        }
+        else{
+          yprima[xindice] = (-3*y[xindice] + 4*y[xindice-1] - y[xindice-2])/(2*h)
+          return(yprima[xindice])
+        }
+      }
+    }  
+  }
+}
+
+# 3) Calculo el punto ---
+# El parámetro, por defecto como TRUE, H indica que las formulas serán progresivas,
+#con H = F las formulas serán regresivas.
+# El parámetro, por defecto como FALSE, endpoint indica si la formula es con punto
+#medio o punto extremo (endpoint = T)
+
+
+########PUNTO A##############
+# TRUE, H indica que las formulas serán progresivas
+derivada3ptos(x, y, 1, H = T, endpoint = T)
+#RDO: 3.09205
+
+derivada3ptos(x, y, 2, H = T, endpoint = F)
+#RDO: 3.11615
+
+derivada3ptos(x, y, 3, H = T, endpoint = F)
+#RDO:3.139975
+
+derivada3ptos(x, y, 4, H = F, endpoint = T)
+#RDO:3.163525
